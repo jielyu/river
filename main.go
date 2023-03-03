@@ -16,8 +16,11 @@ var (
 )
 
 func main() {
+	// 设置日志库
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.Println("hello")
 	fmt.Println("********** Welcome to River C++ Package Tool **********")
-
+	// 创建对象
 	app := cli.NewApp()
 
 	// 配置子命令
