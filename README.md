@@ -8,10 +8,6 @@
 
 ## 已有功能
 
-无
-
-## 未来功能
-
 ### 1. 创建工程
 
 创建可执行工程
@@ -23,29 +19,33 @@ river new binary_proj_name
 创建库工程
 
 ```shell
-river new lib_proj_name --lib
+river new --lib lib_proj_name
 ```
 
-### 2. 编译
+## 未来功能
+
+
+
+### 编译
 
 ```shell
 river build
 ```
 
-### 3. 运行
+### 运行
 
 
 ```shell
 river run
 ```
 
-### 4. 添加依赖包
+### 添加依赖包
 
 ```shell
 river add package_name
 ```
 
-### 5. 升级依赖包
+### 升级依赖包
 
 只升级到最新的小版本，即 `a.b.x`
 
@@ -53,7 +53,7 @@ river add package_name
 river upgrade
 ```
 
-### 6. 发布自定义包
+### 发布自定义包
 
 ```shell
 river publish
