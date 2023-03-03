@@ -109,23 +109,24 @@ func NewCommand(ctx *cli.Context) error {
 }
 
 func BuildCommand(ctx *cli.Context) error {
+	// 命令行参数设置
 	cConfig := models.CommandConfig{Release: isRelease}
-	modeName := "Debug"
-	if isRelease {
-		modeName = "Release"
-	}
 	// 载入toml配置
 	tConfig, err := fs_ops.ParseToml(TOML_PATH)
 	log.Printf("tconfig: %#v", tConfig)
 	if nil != err {
 		return err
 	}
-	// 检查是否需要编译
+	// TODO: 检查是否需要编译
 
 	// 进行编译
 	fmt.Println("---------------------------------------------")
+	modeName := "Debug"
+	if isRelease {
+		modeName = "Release"
+	}
 	fmt.Printf("start to build project with %v mode ...\r\n", modeName)
-	err = fs_ops.BuildProject(cConfig, tConfig)
+	err = fs_ops.BuildProject(&cConfig, &tConfig)
 	if nil != err {
 		return fmt.Errorf("failed to build, e: %v", err)
 	}
@@ -135,6 +136,7 @@ func BuildCommand(ctx *cli.Context) error {
 }
 
 func RunCommand(ctx *cli.Context) error {
+	// 命令行参数设置
 	cConfig := models.CommandConfig{Release: isRelease}
 	// 载入toml配置
 	tConfig, err := fs_ops.ParseToml(TOML_PATH)
@@ -150,11 +152,11 @@ func RunCommand(ctx *cli.Context) error {
 	}
 
 	// 运行工程
-	err = fs_ops.RunProject(cConfig)
+	err = fs_ops.RunProject(&cConfig, &tConfig)
 	if nil != err {
 		return fmt.Errorf("failed to run, e: %v", err)
 	}
-	fmt.Println("run target success")
+	fmt.Println("********** run target success **********")
 	return nil
 }
 
