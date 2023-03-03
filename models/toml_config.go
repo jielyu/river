@@ -1,5 +1,5 @@
 package models
 
 type TOMLConfig struct {
-	Name string
+	Name string `toml:"name"`
 }
