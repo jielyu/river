@@ -10,6 +10,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+const (
+	TOML_PATH = "River.toml"
+)
+
 var (
 	isLibProj bool = false
 	isRelease bool = false
@@ -111,13 +115,17 @@ func BuildCommand(ctx *cli.Context) error {
 		modeName = "Release"
 	}
 	// 载入toml配置
-
+	tConfig, err := fs_ops.ParseToml(TOML_PATH)
+	log.Printf("tconfig: %#v", tConfig)
+	if nil != err {
+		return err
+	}
 	// 检查是否需要编译
 
 	// 进行编译
 	fmt.Println("---------------------------------------------")
 	fmt.Printf("start to build project with %v mode ...\r\n", modeName)
-	err := fs_ops.BuildProject(cConfig)
+	err = fs_ops.BuildProject(cConfig, tConfig)
 	if nil != err {
 		return fmt.Errorf("failed to build, e: %v", err)
 	}
@@ -129,9 +137,14 @@ func BuildCommand(ctx *cli.Context) error {
 func RunCommand(ctx *cli.Context) error {
 	cConfig := models.CommandConfig{Release: isRelease}
 	// 载入toml配置
+	tConfig, err := fs_ops.ParseToml(TOML_PATH)
+	log.Printf("tconfig: %#v", tConfig)
+	if nil != err {
+		return err
+	}
 
 	// 检查是否需要先编译
-	err := BuildCommand(ctx)
+	err = BuildCommand(ctx)
 	if nil != err {
 		return err
 	}

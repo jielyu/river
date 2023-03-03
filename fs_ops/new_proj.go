@@ -167,7 +167,7 @@ Returns:
 */
 func createTOML(projRoot, projName string) error {
 	tomlCont := fmt.Sprintf(`
-name="%v"	
+name = "%v"	
 `, projName)
 	tomlPath := path.Join(projRoot, "River.toml")
 	err := createAndFillFile(tomlPath, tomlCont)
