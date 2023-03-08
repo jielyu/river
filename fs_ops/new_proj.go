@@ -1,11 +1,15 @@
 package fs_ops
 
 import (
+	"bytes"
 	"embed"
 	"fmt"
 	"log"
 	"os"
 	"path"
+
+	"github.com/BurntSushi/toml"
+	"github.com/jielyu/river/models"
 )
 
 //go:embed assets/gitignore.txt
@@ -86,7 +90,7 @@ func createGitignore(p string) error {
 	gitCont := string(data)
 	err := createAndFillFile(p, gitCont)
 	if nil != err {
-		return fmt.Errorf("failed to create .gitignore file, e:%v", err)
+		return fmt.Errorf("failed to create .gitignore file. error:%v", err)
 	}
 	return nil
 }
@@ -108,7 +112,7 @@ func createLibSource(incDir, srcDir string) error {
 	incCont := string(data)
 	err := createAndFillFile(incLibPath, incCont)
 	if nil != err {
-		return fmt.Errorf("failed to create include/libs.h, e:%v", err)
+		return fmt.Errorf("failed to create include/libs.h. error:%v", err)
 	}
 	// 创建 src/libs.cpp 文件
 	srcLibPath := path.Join(srcDir, "libs.cpp")
@@ -116,7 +120,7 @@ func createLibSource(incDir, srcDir string) error {
 	srcCont := string(data)
 	err = createAndFillFile(srcLibPath, srcCont)
 	if nil != err {
-		return fmt.Errorf("failed to create src/libs.cpp, e:%v", err)
+		return fmt.Errorf("failed to create src/libs.cpp. error:%v", err)
 	}
 	return err
 }
@@ -136,7 +140,7 @@ func createMainFile(srcDir string) error {
 	mainPath := path.Join(srcDir, "main.cpp")
 	err := createAndFillFile(mainPath, mainCont)
 	if nil != err {
-		return fmt.Errorf("failed to create src/main.cpp, e:%v", err)
+		return fmt.Errorf("failed to create src/main.cpp. error:%v", err)
 	}
 	return nil
 }
@@ -152,18 +156,27 @@ Returns:
 
 */
 func createTOML(projRoot, projName string, isLib bool) error {
+	// 构造TOMLConfig对象
 	projectType := "lib"
 	if !isLib {
 		projectType = "exe"
 	}
-	tomlCont := fmt.Sprintf(`
-name = "%v"	
-project_type="%v"
-`, projName, projectType)
+	tConfig := models.TOMLConfig{
+		Name:        projName,
+		ProjectType: projectType,
+	}
+	// 序列化TOML
+	buf := new(bytes.Buffer)
+	err := toml.NewEncoder(buf).Encode(tConfig)
+	if err != nil {
+		return fmt.Errorf("failed to encoder TOML. error:%v", err)
+	}
+	tomlCont := buf.String()
+	// 写入到 River.toml 文件
 	tomlPath := path.Join(projRoot, "River.toml")
-	err := createAndFillFile(tomlPath, tomlCont)
+	err = createAndFillFile(tomlPath, tomlCont)
 	if nil != err {
-		return fmt.Errorf("failed to create %v, e:%v", tomlPath, err)
+		return fmt.Errorf("failed to create %v. error:%v", tomlPath, err)
 	}
 	return nil
 }

@@ -22,7 +22,7 @@ func BuildProject(cConfig *models.CommandConfig, tConfig *models.TOMLConfig) err
 	// 读取当前项目源码文件
 	files, err := findAllFiles("src/")
 	if nil != err {
-		return fmt.Errorf("failed to find source file from src/, e:%v", err)
+		return fmt.Errorf("failed to find source file from src/. error:%v", err)
 	}
 	fmt.Printf("files=%v\r\n", files)
 
@@ -52,7 +52,6 @@ func BuildProject(cConfig *models.CommandConfig, tConfig *models.TOMLConfig) err
 	}
 	for idx, sourceFile := range sourceFiles {
 		objFile := objFiles[idx]
-		// cmd := fmt.Sprintf("g++ -c %v -o %v -Iinclude", sourceFile, objFile)
 		c := exec.Command("g++", "-c", sourceFile, "-o", objFile, "-Iinclude")
 		output, err := c.Output()
 		if err != nil {
