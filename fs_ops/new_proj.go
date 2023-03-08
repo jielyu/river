@@ -58,7 +58,7 @@ func CreateProject(projName string, isLib bool) error {
 		}
 	}
 	// 创建包管理配置文件 River.toml
-	err = createTOML(projRoot, projName)
+	err = createTOML(projRoot, projName, isLib)
 	if nil != err {
 		return err
 	}
@@ -142,7 +142,7 @@ func createMainFile(srcDir string) error {
 int main(int argc, char ** argv) {
 	int a = 5, b = 7;
 	int c = add(a, b);
-	std::cout << "a=" << a ", b=" << b << std::endl;
+	std::cout << "a=" << a << ", b=" << b << std::endl;
 	std::cout << "add(a, b)=" << c << std::endl;
 	return 0;
 }
@@ -165,10 +165,15 @@ Returns:
     error
 
 */
-func createTOML(projRoot, projName string) error {
+func createTOML(projRoot, projName string, isLib bool) error {
+	projectType := "lib"
+	if !isLib {
+		projectType = "exe"
+	}
 	tomlCont := fmt.Sprintf(`
 name = "%v"	
-`, projName)
+project_type="%v"
+`, projName, projectType)
 	tomlPath := path.Join(projRoot, "River.toml")
 	err := createAndFillFile(tomlPath, tomlCont)
 	if nil != err {
