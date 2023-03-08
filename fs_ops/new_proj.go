@@ -1,11 +1,18 @@
 package fs_ops
 
 import (
+	"embed"
 	"fmt"
 	"log"
 	"os"
 	"path"
 )
+
+//go:embed assets/gitignore.txt
+//go:embed assets/libs.h
+//go:embed assets/libs.cpp
+//go:embed assets/main.cpp
+var assetsFs embed.FS
 
 /*创建工程，包括目录结构和关键的示例文件
 
@@ -75,11 +82,8 @@ Returns:
 
 */
 func createGitignore(p string) error {
-	gitCont := `
-output/
-build/
-*.exe
-	`
+	data, _ := assetsFs.ReadFile("assets/gitignore.txt")
+	gitCont := string(data)
 	err := createAndFillFile(p, gitCont)
 	if nil != err {
 		return fmt.Errorf("failed to create .gitignore file, e:%v", err)
@@ -100,24 +104,16 @@ Returns:
 func createLibSource(incDir, srcDir string) error {
 	// 创建 include/libs.h 文件
 	incLibPath := path.Join(incDir, "libs.h")
-	incCont := `#ifndef __LIBS_H__
-#define __LIBS_H__	
-
-int add(int a, int b);
-
-#endif`
+	data, _ := assetsFs.ReadFile("assets/libs.h")
+	incCont := string(data)
 	err := createAndFillFile(incLibPath, incCont)
 	if nil != err {
 		return fmt.Errorf("failed to create include/libs.h, e:%v", err)
 	}
 	// 创建 src/libs.cpp 文件
 	srcLibPath := path.Join(srcDir, "libs.cpp")
-	srcCont := `#include "libs.h"
-
-int add(int a, int b) {
-	return a + b;
-}
-`
+	data, _ = assetsFs.ReadFile("assets/libs.cpp")
+	srcCont := string(data)
 	err = createAndFillFile(srcLibPath, srcCont)
 	if nil != err {
 		return fmt.Errorf("failed to create src/libs.cpp, e:%v", err)
@@ -135,18 +131,8 @@ Returns:
 
 */
 func createMainFile(srcDir string) error {
-	mainCont := `
-#include <iostream>
-#include "libs.h"
-
-int main(int argc, char ** argv) {
-	int a = 5, b = 7;
-	int c = add(a, b);
-	std::cout << "a=" << a << ", b=" << b << std::endl;
-	std::cout << "add(a, b)=" << c << std::endl;
-	return 0;
-}
-`
+	data, _ := assetsFs.ReadFile("assets/main.cpp")
+	mainCont := string(data)
 	mainPath := path.Join(srcDir, "main.cpp")
 	err := createAndFillFile(mainPath, mainCont)
 	if nil != err {

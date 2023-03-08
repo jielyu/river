@@ -22,7 +22,7 @@ river new binary_proj_name
 river new --lib lib_proj_name
 ```
 
-### 编译
+### 2. 编译
 
 在工程跟目录下运行指令
 
